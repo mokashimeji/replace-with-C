@@ -13,7 +13,7 @@ int main(){
   char src[]="abcdefghijkhijkabcmlnopqabcdemlnhij";
   char key[20]; //str to search
   char sub[20]; //substitute
-  char new[100]; //str after replasing key with sub
+  char new[40]; //str after replasing key with sub
   char *p_key;
   char *p_sub;
   char *p_new;
@@ -58,32 +58,58 @@ char *replace(char *src , char *key ,char *sub, char *new ,int sizeof_new){
   printf("the last letter of src = %c[%p]\nthe last letter of key = %c[%p]\n\n",*(src+len_src-1),(src+len_src-1),*(src+len_key-1),(src+len_key-1)); //they are the characters located at the end of each strins.
 
 
-  while(*src!='\0'&&p_new+sizeof_new-1>new){
+  printf("Before strting while loop : \n");
+  printf("p_new + sizeof_new -1  =  %p\n",p_new+sizeof_new-1);
+  printf("new  =  %p\n",new);
+  printf("Remaining of memory  : %d\n\n", sizeof_new-(new-p_new)-1);
+
+  while(*src!='\0' && p_new+sizeof_new-1>new){
+/*
+  ●"p_new+sizeof_new-1" always points to the last address of string "new(p_new)" .
+  ● Pointer "new" points diffeent pointers each time this while code is excuted.
+  ● When the conditoin "p_new+sizeof_new-1>new" is not fulfilled,
+  that means new string you are making is too long to store the string new you prepared.
+
+*/
     printf("*src = %c\n",*src);
     printf("p_new+sizeof_new-1 = %p    new = %p \n",p_new+sizeof_new-1,new);
 
-    if(strncmp(src,key,len_key)==0){ //the case where key is included in src
-      printf("gaccha!!\n");
+/*
+  the case where key is included in src
+*/
+    if(strncmp(src,key,len_key)==0){
+      printf("\ngaccha!!\n");
 
-        if(p_new+sizeof_new-1>=new+len_sub){  //the case where key is included in src, AND there is enough spaace to store sub instead of key in str
+      /*
+        the case where key is included in src,
+        AND there is enough spaace to store sub instead of key in str
+      */
+        if(p_new+sizeof_new > new+len_sub){   // p_new + sizeof_new  →  Points to the following adress of the last adress of string new.
           strcpy(new,sub);
           new+=len_sub;
-          printf("remaining : %d",p_new+sizeof_new-new);
+          printf("p_new : %s\n",p_new);
+          printf("Address of p_new in decimal = %d   sizeof_new = %d   Address of new in decimal = %d\n",p_new,sizeof_new,new);
+          printf("remaining (p_new+sizeof_new-new) : %d\n\n",p_new+sizeof_new-new);
         }
 
         else{                                 //the case where key is included in src, BUT there is NOT enough space to store any letters in str.
+          printf("NOT ENOUGH SPACE!!\n");
+          printf("Address of p_new in decimal = %d   sizeof_new = %d   Address of new in decimal = %d\n",p_new,sizeof_new,new);
+          printf("remaining (p_new+sizeof_new-new) : %d\n\n",p_new+sizeof_new-new);
           strncpy(new,sub,sizeof_new-(new-p_new)-1);
           new+=sizeof_new-(new-p_new)-1;
         }
 
         src+=len_key;    //No matter whether if get excuted or else get excuted
-
+        printf("address of src = %p\n\n",src);
     }
 
     else{
       *new=*src;
       src++;
       new++;
+      printf("Address of p_new in decimal = %d   sizeof_new = %d   Address of new in decimal = %d\n",p_new,sizeof_new,new);
+      printf("remaining (p_new+sizeof_new-new) : %d\n\n",p_new+sizeof_new-new);
     }
 
   }
